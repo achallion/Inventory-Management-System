@@ -12,6 +12,6 @@ import com.manage.inventory.Model.Category;
 @Repository
 public interface AdminCategoryDao extends JpaRepository<Category, Integer>{
 
-	@Query("SELECT category FROM Category category where category.name = ?1")
+	@Query("SELECT category FROM Category category WHERE category.name = ?1")
 	Optional<Category> findByName(String name);
 }
