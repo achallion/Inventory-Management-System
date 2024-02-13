@@ -1,6 +1,8 @@
 package com.manage.inventory.Model;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -9,9 +11,10 @@ import jakarta.persistence.ManyToOne;
 public class Product {
 	// Data
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	private String name;
-	private String desc;
+	private String description;
 	private int price;
 	private int quantity;
 	@ManyToOne
@@ -35,12 +38,12 @@ public class Product {
 		this.name = name;
 	}
 
-	public String getDesc() {
-		return this.desc;
+	public String getDescription() {
+		return this.description;
 	}
 
-	public void setDesc(String desc) {
-		this.name = desc;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public int getPrice() {
