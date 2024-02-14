@@ -50,14 +50,23 @@ public class AdminService {
 	}
 
 	//
-	public Pair<String, Boolean> addSubCategory(SubCategory subCategory) {
-		Optional<SubCategory> subCategoryOptional = adminSubCategoryDao.findById(subCategory.getId())
-				.or(() -> adminSubCategoryDao.findByName(subCategory.getName()));
+	public Pair<String, Boolean> addSubCategory(Pair<SubCategory, Integer> subCatPair) {
+		// Get SubCategory and Parent Category Id
+		SubCategory subCategory = subCatPair.getKey();
+		int parentCategoryId = subCatPair.getValue();
+
+		// Find if subcategory alredy present
+		Optional<SubCategory> subCategoryOptional = adminSubCategoryDao.findByName(subCategory.getName());
 		if (subCategoryOptional.isPresent())
-			return new Pair<>("A Sub-Category with "
-					+ (subCategoryOptional.get().getId() == subCategory.getId() ? "id " + subCategory.getId()
-							: "name " + subCategory.getName())
-					+ "is already present.", false);
+			return new Pair<>("A Sub-Category with name " + subCategory.getName() + " is already present.", false);
+
+		// Parent Category should be present
+		Optional<Category> categoryOptional = adminCategoryDao.findById(parentCategoryId);
+		if(!categoryOptional.isPresent())
+			return new Pair<>("No Category with id " + parentCategoryId + " is present.",false);
+		subCategory.setCategory(categoryOptional.get());
+
+		// Try to add subcategory
 		try {
 			adminSubCategoryDao.save(subCategory);
 		} catch (DataIntegrityViolationException e) {

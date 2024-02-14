@@ -11,6 +11,7 @@ import com.manage.inventory.Model.Category;
 import com.manage.inventory.Model.Product;
 import com.manage.inventory.Model.SubCategory;
 import com.manage.inventory.Model.Request.AddCategoryRequest;
+import com.manage.inventory.Model.Request.AddSubCategoryRequest;
 import com.manage.inventory.Service.AdminService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,8 +32,10 @@ public class AdminController {
 	}
 
 	@PostMapping("add/subcategory")
-	public ResponseEntity<String> addSubCategory(@RequestBody SubCategory subCategory) {
-		Pair<String, Boolean> result = adminService.addSubCategory(subCategory);
+	public ResponseEntity<String> addSubCategory(@RequestBody AddSubCategoryRequest request) {
+		if(request == null || request.getName() == null || request.getDescription() == null || request.getParentCategoryId() == 0)
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Check Request Body Params");
+		Pair<String, Boolean> result = adminService.addSubCategory(request.getSubCategory());
 		HttpStatus status = result.getValue() == true ? HttpStatus.CREATED : HttpStatus.CONFLICT;
 		return new ResponseEntity<>(result.getKey(), status);
 	}

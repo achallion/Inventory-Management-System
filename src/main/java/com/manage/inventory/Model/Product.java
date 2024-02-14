@@ -69,5 +69,4 @@ public class Product {
 	public void setSubCategory(SubCategory subCategory) {
 		this.subCategory = subCategory;
 	}
-
 }
