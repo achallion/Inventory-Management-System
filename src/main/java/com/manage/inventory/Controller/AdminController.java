@@ -5,10 +5,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.manage.inventory.Model.Category;
 import com.manage.inventory.Model.Product;
 import com.manage.inventory.Model.SubCategory;
+import com.manage.inventory.Model.Request.AddCategoryRequest;
 import com.manage.inventory.Service.AdminService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,8 +38,10 @@ public class AdminController {
 	}
 
 	@PostMapping("add/category")
-	public ResponseEntity<String> addCategory(@RequestBody Category category) {
-		Pair<String, Boolean> result = adminService.addCategory(category);
+	public ResponseEntity<String> addCategory(@RequestBody AddCategoryRequest request) {
+		if(request == null || request.getName() == null || request.getDescription() == null)
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Check Request Body Params");
+		Pair<String, Boolean> result = adminService.addCategory(request.getCategory());
 		HttpStatus status = result.getValue() == true ? HttpStatus.CREATED : HttpStatus.CONFLICT;
 		return new ResponseEntity<>(result.getKey(), status);
 	}

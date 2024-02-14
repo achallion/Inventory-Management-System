@@ -71,16 +71,9 @@ public class AdminService {
 
 	//
 	public Pair<String, Boolean> addCategory(Category category) {
-
-		Optional<Category> categoryOptional = adminCategoryDao.findById(category.getId())
-				.or(() -> adminCategoryDao.findByName(category.getName()));
+		Optional<Category> categoryOptional = adminCategoryDao.findByName(category.getName());
 		if (categoryOptional.isPresent())
-			return new Pair<>(
-					"A Category with "
-							+ (categoryOptional.get().getId() == category.getId() ? "id " + category.getId()
-									: "name " + category.getName())
-							+ " is already present.",
-					false);
+			return new Pair<>("A Category with name " + category.getName() + " is already present.", false);
 		try {
 			adminCategoryDao.save(category);
 		} catch (DataIntegrityViolationException e) {
