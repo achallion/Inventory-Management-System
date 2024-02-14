@@ -22,25 +22,24 @@ public class AdminController {
 	private AdminService adminService;
 
 	@PostMapping("add/product")
-	public String addProduct(@RequestBody Product product) {
-		return adminService.addProduct(product);
+	public ResponseEntity<String> addProduct(@RequestBody Product product) {
+		Pair<String, Boolean> result = adminService.addProduct(product);
+		HttpStatus status = result.getValue() == true ? HttpStatus.CREATED : HttpStatus.CONFLICT;
+		return new ResponseEntity<>(result.getKey(), status);
 	}
 
 	@PostMapping("add/subcategory")
-	public String addSubCategory(@RequestBody SubCategory subCategory) {
-		return adminService.addSubCategory(subCategory);
+	public ResponseEntity<String> addSubCategory(@RequestBody SubCategory subCategory) {
+		Pair<String, Boolean> result = adminService.addSubCategory(subCategory);
+		HttpStatus status = result.getValue() == true ? HttpStatus.CREATED : HttpStatus.CONFLICT;
+		return new ResponseEntity<>(result.getKey(), status);
 	}
 
 	@PostMapping("add/category")
 	public ResponseEntity<String> addCategory(@RequestBody Category category) {
-		Pair<String, Integer> p = adminService.addCategory(category);
-		if (p.getValue() == 0)
-			return new ResponseEntity<>(p.getKey(), HttpStatus.OK);
-
-		String msg = "Failed Request";
-		if (p.getValue() == 1 || p.getValue() == 2)
-			msg = p.getKey();
-		return new ResponseEntity<>(msg, HttpStatus.NOT_MODIFIED);
+		Pair<String, Boolean> result = adminService.addCategory(category);
+		HttpStatus status = result.getValue() == true ? HttpStatus.CREATED : HttpStatus.CONFLICT;
+		return new ResponseEntity<>(result.getKey(), status);
 	}
 
 }
