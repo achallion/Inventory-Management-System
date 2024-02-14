@@ -12,7 +12,7 @@ public class AddSubCategoryRequest {
 	private int parentCategoryId;
 
 	// methods
-	public Pair<SubCategory,Integer> getSubCategory() {
+	public Pair<SubCategory,Integer> getSubCategoryPair() {
 		SubCategory subCategory = new SubCategory();
 		subCategory.setName(name);
 		subCategory.setDescription(description);

@@ -7,10 +7,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.manage.inventory.Model.Category;
 import com.manage.inventory.Model.Product;
-import com.manage.inventory.Model.SubCategory;
 import com.manage.inventory.Model.Request.AddCategoryRequest;
+import com.manage.inventory.Model.Request.AddProductRequest;
 import com.manage.inventory.Model.Request.AddSubCategoryRequest;
 import com.manage.inventory.Service.AdminService;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,8 +24,10 @@ public class AdminController {
 	private AdminService adminService;
 
 	@PostMapping("add/product")
-	public ResponseEntity<String> addProduct(@RequestBody Product product) {
-		Pair<String, Boolean> result = adminService.addProduct(product);
+	public ResponseEntity<String> addProduct(@RequestBody AddProductRequest request) {
+		if(request == null || request.getName() == null || request.getDescription() == null || request.getParentSubCategoryId() == 0 )
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Check Request Body Params");
+		Pair<String, Boolean> result = adminService.addProduct(request.getProductPair());
 		HttpStatus status = result.getValue() == true ? HttpStatus.CREATED : HttpStatus.CONFLICT;
 		return new ResponseEntity<>(result.getKey(), status);
 	}
@@ -35,7 +36,7 @@ public class AdminController {
 	public ResponseEntity<String> addSubCategory(@RequestBody AddSubCategoryRequest request) {
 		if(request == null || request.getName() == null || request.getDescription() == null || request.getParentCategoryId() == 0)
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Check Request Body Params");
-		Pair<String, Boolean> result = adminService.addSubCategory(request.getSubCategory());
+		Pair<String, Boolean> result = adminService.addSubCategory(request.getSubCategoryPair());
 		HttpStatus status = result.getValue() == true ? HttpStatus.CREATED : HttpStatus.CONFLICT;
 		return new ResponseEntity<>(result.getKey(), status);
 	}

@@ -11,15 +11,15 @@ public class AddProductRequest {
 	private String description;
 	private int price;
 	private int quantity;
-	private int parentSubCatId;
+	private int parentSubCategoryId;
 
 	// methods
-	public Pair<Product, Integer> getProduct() {
+	public Pair<Product, Integer> getProductPair() {
 		Product product = new Product();
 		product.setName(name);
 		product.setDescription(description);
 		product.setPrice(price);
 		product.setQuantity(quantity);
-		return new Pair<>(product, parentSubCatId);
+		return new Pair<>(product, parentSubCategoryId);
 	}
 }

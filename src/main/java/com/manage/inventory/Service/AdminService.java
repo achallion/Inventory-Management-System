@@ -30,14 +30,23 @@ public class AdminService {
 	private AdminProductDao adminProductDao;
 
 	//
-	public Pair<String, Boolean> addProduct(Product product) {
-		Optional<Product> productOptional = adminProductDao.findById(product.getId())
-				.or(() -> adminProductDao.findByName(product.getName()));
+	public Pair<String, Boolean> addProduct(Pair<Product,Integer> productPair) {
+		// Get Product and Parent Sub-Category Id
+		Product product = productPair.getKey();
+		int parentSubCategoryId = productPair.getValue();
+
+		// Find if Product already present
+		Optional<Product> productOptional = adminProductDao.findByName(product.getName());
 		if (productOptional.isPresent())
-			return new Pair<>("A Product with "
-					+ (productOptional.get().getId() == product.getId() ? "id " + product.getId()
-							: "name " + product.getName())
-					+ " is already present.", false);
+			return new Pair<>("A Product with name " + product.getName() + " is already present.", false);
+
+		// Parent Sub-Category should be present
+		Optional<SubCategory> subCategoryOptional = adminSubCategoryDao.findById(parentSubCategoryId);
+		if(!subCategoryOptional.isPresent())
+			return new Pair<>("No Sub-Category with id " + parentSubCategoryId + " is present.",false);
+		product.setSubCategory(subCategoryOptional.get());
+
+		// Try to add Product
 		try {
 			adminProductDao.save(product);
 		} catch (DataIntegrityViolationException e) {
@@ -55,7 +64,7 @@ public class AdminService {
 		SubCategory subCategory = subCatPair.getKey();
 		int parentCategoryId = subCatPair.getValue();
 
-		// Find if subcategory alredy present
+		// Find if subcategory already present
 		Optional<SubCategory> subCategoryOptional = adminSubCategoryDao.findByName(subCategory.getName());
 		if (subCategoryOptional.isPresent())
 			return new Pair<>("A Sub-Category with name " + subCategory.getName() + " is already present.", false);
@@ -80,9 +89,12 @@ public class AdminService {
 
 	//
 	public Pair<String, Boolean> addCategory(Category category) {
+		// Find if Category already present
 		Optional<Category> categoryOptional = adminCategoryDao.findByName(category.getName());
 		if (categoryOptional.isPresent())
 			return new Pair<>("A Category with name " + category.getName() + " is already present.", false);
+
+		// Try to add subcategory
 		try {
 			adminCategoryDao.save(category);
 		} catch (DataIntegrityViolationException e) {
@@ -93,5 +105,4 @@ public class AdminService {
 		}
 		return new Pair<>("Added new Category At ID : " + category.getId(), true);
 	}
-
 }
